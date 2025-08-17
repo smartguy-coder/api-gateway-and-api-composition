@@ -1,0 +1,48 @@
+services:
+  delivery_service:
+    container_name: delivery_service
+    build:
+      context: /delivery/
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      - ENV=dev
+    restart: always
+    networks:
+      - app-network
+
+  users_service:
+    container_name: users_service
+    build:
+      context: /users/
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
+    restart: always
+    networks:
+      - app-network
+
+  krakend:
+    container_name: krakend
+    build:
+      context: /krakend/
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+
+networks:
+  app-network:
